@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>¡Invitación al Caos Cómico Ventoso! 😂💨</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bangers&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Fredoka One', cursive;
+            background: linear-gradient(135deg, #FF6B6B, #FFD166, #06D6A0, #118AB2, #073B4C);
+            background-size: 400% 400%;
+            animation: backgroundAnimation 18s ease infinite;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            overflow: hidden;
+            color: #333;
+            perspective: 1500px; /* Habilitar perspectiva 3D para la animación del sobre */
+        }
+
+        @keyframes backgroundAnimation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .main-container {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100vh;
+            pointer-events: none; /* Desactiva eventos de ratón inicialmente para el contenedor principal */
+        }
+
+        /* ESTILOS DEL SOBRE */
+        .envelope-wrapper {
+            position: relative;
+            z-index: 10; /* Para que el sobre esté por encima de la tarjeta */
+            pointer-events: auto; /* Reactivar eventos de ratón para el sobre */
+            transition: transform 1.5s ease-in-out, opacity 1s ease-out; /* Transición para la animación de vuelta y desvanecimiento */
+            transform-style: preserve-3d; /* Para que la rotación se vea bien */
+        }
+
+        .envelope {
+            width: 300px;
+            height: 200px;
+            background-color: #f7e16e; /* Color del sobre */
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.5s ease, box-shadow 0.3s ease;
+            transform-style: preserve-3d;
+            backface-visibility: hidden; /* Ocultar la parte de atrás por defecto */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        .envelope:hover {
+            transform: scale(1.05);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.5);
+        }
+
+        .envelope::before {
+            content: "🌬️ ¡Sopla aquí para abrir!";
+            font-size: 1.1em;
+            color: #333;
+            margin-bottom: 10px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .envelope:hover::before {
+            opacity: 1;
+        }
+
+        .envelope-flap {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 0;
+            border-left: 150px solid transparent;
+            border-right: 150px solid transparent;
+            border-bottom: 100px solid #f9d71c; /* Color de la solapa */
+            transform-origin: top;
+            transition: transform 0.7s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            z-index: 1;
+            backface-visibility: hidden;
+        }
+
+        /* Animación de apertura de la solapa */
+        .envelope.open .envelope-flap {
+            transform: rotateX(180deg);
+        }
+
+        /* La carta que sale del sobre */
+        .card {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.7) rotateZ(5deg); /* Empieza con una ligera rotación */
+            opacity: 0;
+            background-color: rgba(255, 255, 255, 0.98);
+            padding: 45px;
+            border-radius: 35px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.35);
+            max-width: 800px;
+            width: 90%;
+            text-align: center;
+            z-index: 5; /* Por encima del sobre cerrado, por debajo del abierto */
+            pointer-events: none; /* No clickable hasta que aparezca */
+            transition: opacity 1s ease-out, transform 1s ease-out;
+            animation: viento 5s ease-in-out infinite alternate; /* Animación de viento */
+            transform-style: preserve-3d;
+        }
+
+        .card.active {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1) rotateZ(0deg); /* Vuelve a la posición normal */
+            pointer-events: auto; /* Habilitar clicks cuando está activo */
+            animation: none; /* Detiene la animación de viento al activarse */
+        }
+
+        /* Animación de la carta saliendo */
+        @keyframes slideInCard {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -50%) translateY(150px) scale(0.8) rotateZ(10deg);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%) translateY(0) scale(1) rotateZ(0deg);
+            }
+        }
+
+        .card.slide-in {
+            animation: slideInCard 1.2s ease-out forwards;
+            /* La animación de viento se aplica continuamente si no se detiene */
+            animation-name: slideInCard, viento;
+            animation-duration: 1.2s, 5s;
+            animation-timing-function: ease-out, ease-in-out;
+            animation-iteration-count: 1, infinite;
+            animation-direction: normal, alternate;
+            animation-fill-mode: forwards, none;
+        }
+
+        /* Animación de "viento" */
+        @keyframes viento {
+            0% { transform: translate(-50%, -50%) rotateZ(1deg) translateY(0px) translateX(0px); }
+            25% { transform: translate(-50%, -50%) rotateZ(-1deg) translateY(5px) translateX(-5px); }
+            50% { transform: translate(-50%, -50%) rotateZ(1.5deg) translateY(-3px) translateX(3px); }
+            75% { transform: translate(-50%, -50%) rotateZ(-0.5deg) translateY(2px) translateX(-2px); }
+            100% { transform: translate(-50%, -50%) rotateZ(1deg) translateY(0px) translateX(0px); }
+        }
+
+        /* Estilos del contenido de la tarjeta - los mismos que antes */
+        h1 {
+            font-family: 'Bangers', cursive;
+            font-size: 3.8em;
+            color: #E63946;
+            margin-bottom: 28px;
+            text-shadow: 4px 4px 7px rgba(0,0,0,0.3);
+            line-height: 1.1;
+        }
+
+        p {
+            font-size: 1.3em;
+            color: #444;
+            line-height: 1.7;
+            margin-bottom: 35px;
+        }
+
+        .btn-container {
+            margin-top: 45px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 25px;
+        }
+
+        .btn {
+            font-family: 'Fredoka One', cursive;
+            padding: 18px 35px;
+            font-size: 1.2em;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.35s cubic-bezier(0.25, 0.8, 0.25, 1), transform 0.2s ease-in-out;
+            color: white;
+            font-weight: bold;
+            letter-spacing: 1px;
+            box-shadow: 0 8px 18px rgba(0,0,0,0.25);
+            text-transform: uppercase;
+        }
+
+        .btn.si {
+            background-color: #2ECC71;
+            color: #fff;
+            background-image: linear-gradient(to right, #2ECC71 0%, #28B463 100%);
+        }
+        .btn.si:hover {
+            transform: translateY(-8px) scale(1.07);
+            box-shadow: 0 15px 30px rgba(46, 204, 113, 0.4);
+        }
+
+        .btn.no {
+            background-color: #E74C3C;
+            color: #fff;
+            background-image: linear-gradient(to right, #E74C3C 0%, #C0392B 100%);
+            position: relative;
+        }
+        .btn.no:hover {
+            animation: temblor 0.3s infinite;
+            cursor: not-allowed;
+        }
+
+        @keyframes temblor {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            50% { transform: translateX(5px); }
+            75% { transform: translateX(-5px); }
+            100% { transform: translateX(0); }
+        }
+
+        .btn.talvez {
+            background-color: #F1C40F;
+            color: #333;
+            background-image: linear-gradient(to right, #F1C40F 0%, #F39C12 100%);
+        }
+        .btn.talvez:hover {
+            transform: translateY(-8px) scale(1.07);
+            box-shadow: 0 15px 30px rgba(241, 196, 15, 0.4);
+        }
+
+        .response {
+            margin-top: 50px;
+            font-size: 1.6em;
+            font-weight: bold;
+            display: none;
+            animation: aparecer 1s ease-out forwards;
+            padding: 25px;
+            border-radius: 20px;
+            background-color: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            line-height: 1.5;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        @keyframes aparecer {
+            from { opacity: 0; transform: scale(0.7) translateY(20px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        /* Media Queries para Responsividad */
+        @media (max-width: 900px) {
+            h1 { font-size: 3em; }
+            .card { padding: 35px; }
+            p { font-size: 1.1em; }
+            .btn { font-size: 1.1em; padding: 15px 28px; }
+            .response { font-size: 1.4em; }
+            .envelope { width: 250px; height: 170px; }
+            .envelope-flap { border-left: 125px solid transparent; border-right: 125px solid transparent; border-bottom: 85px solid #f9d71c; }
+        }
+
+        @media (max-width: 700px) {
+            h1 { font-size: 2.5em; }
+            .card { padding: 30px; }
+            p { font-size: 1em; margin-bottom: 25px; }
+            .btn-container { flex-direction: column; gap: 15px; }
+            .btn { font-size: 1em; padding: 12px 25px; width: 80%; max-width: 300px; margin: 0 auto; }
+            .response { font-size: 1.2em; padding: 20px; }
+            .envelope { transform: scale(0.8); } /* Escalar el sobre un poco más */
+        }
+
+        @media (max-width: 500px) {
+            h1 { font-size: 2em; }
+            .card { padding: 20px; border-radius: 25px; }
+            p { font-size: 0.9em; margin-bottom: 20px; }
+            .btn { font-size: 0.9em; padding: 10px 20px; width: 90%; }
+            .response { font-size: 1em; padding: 15px; }
+            .envelope { transform: scale(0.7); } /* Escalar el sobre aún más */
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container" id="mainContainer">
+        <div class="envelope-wrapper" id="envelopeWrapper">
+            <div class="envelope" id="envelope">
+                <div class="envelope-flap" id="envelopeFlap"></div>
+            </div>
+        </div>
+
+        <div class="card" id="invitationCard">
+            <h1>🤣 ¡Prepárate para Descojonarte! 🤣</h1>
+            <p>
+                ¡Alerta máxima de hilaridad! 🚨 Estás a punto de recibir una dosis concentrada de lo absurdo,
+                lo inesperado y lo rematadamente gracioso. Si tu sentido del humor está listo para un viaje
+                sin retorno al país de las carcajadas...
+            </p>
+
+            <p>¿Te atreves a pulsar alguno de estos botones y descubrir qué te espera? 🤪</p>
+
+            <div class="btn-container">
+                <button class="btn si" onclick="responder('si')">✅ ¡A reír se ha dicho!</button>
+                <button class="btn talvez" onclick="responder('talvez')">🤔 Mmm... ¿depende de qué tan chistoso sea?</button>
+                <button class="btn no" onclick="responderNo()">❌ ¡Ni loco! (Demasiada diversión)</button>
+            </div>
+
+            <div class="response" id="respuesta"></div>
+        </div>
+    </div>
+
+    <script>
+        // Respuestas aún más chistosas y enfocadas en la experiencia cómica
+        const respuestasSi = [
+            "🎉 ¡BOM! ¡Tu cerebro acaba de entrar en modo comedia! Prepárate para una avalancha de chistes tan malos que te harán reír por lo malos, memes que desafían toda lógica y situaciones tan random que cuestionarás tu existencia. ¡La risa es obligatoria, las lágrimas de alegría son opcionales! 😂",
+            "🚀 ¡ACTIVANDO PROTOCOLO DE HUMOR EXTREMO! ¡Respuesta afirmativa detectada! Estás a punto de embarcarte en una misión secreta cuyo único objetivo es desatar carcajadas. Tu equipaje debe incluir: tolerancia a lo ridículo, capacidad para reírte de ti mismo y un buen par de audífonos (por si los chistes son MUY malos). ¡Tu recompensa: un certificado honorífico de 'Experto en Descojone'! 🎖️",
+            "🥳 ¡LA CARTA HA SIDO FIRMADA CON PENSAMIENTOS DE GLORIOSA COMEDIA! Sabía que tenías el alma de un aventurero cómico. Beneficios: acceso exclusivo a mis dramas cotidianos (contados como stand-up), un hombro para llorar... ¡de la risa!, y la oportunidad de dominar el arte de la procrastinación con estilo. ¡Aceptas el paquete completo de humor sin mirar atrás!",
+            "✨ ¡BINGO! ¡Qué alegría cósmica! Mi algoritmo de humor acaba de detectar una compatibilidad del 99.9% (el 0.1% es por si te da un calambre de risa). Esto significa: llamadas random para contarnos cosas sin sentido, sesiones de '¿qué pedir de comer?' de 3 horas (con bromas, obvio) y la certeza de que NUNCA te aburrirás. ¡La diversión está garantizada, o te devuelvo tu seriedad! 😉"
+        ];
+
+        const respuestasTalvez = [
+            "🤔 ¡Ah, la indecisión cómica! ¡Me gusta el misterio! Es como elegir entre papas fritas o nachos... ¿por qué no ambos, con un chiste extra? Este 'tal vez' te da: sesiones de degustación de comida dudosa, debates filosóficos sobre el mejor sabor de papas y, sí, chismes tan jugosos que necesitarás una servilleta. ¡El 'tal vez' acaba de volverse más divertido y sospechoso!",
+            "🤯 ¡El 'tal vez' es el nuevo 'sí' en el lenguaje del humor absurdo! Si la diversión con comida es tu motor de alegría, ¡bienvenido al equipo! Tenemos un plan de acción culinario que incluye: explorar restaurantes con nombres raros, intentar recetas de TikTok que terminarán en desastre (con risas) y, por supuesto, pedir pizza a domicilio en pijama. ¡Acepta la gula y la risa, o te conviertes en un mimo!",
+            "🧐 ¡Hmmm... 'tal vez' me suena a que necesitas un poco más de persuasión con sabor a comedia! Te ofrezco: un tour guiado por mi nevera (limitado), el derecho a robarme el último trozo de pizza (solo una vez, con una broma) y, lo más importante, ¡un festival de chistes tan buenos que tu estómago dolerá! ¿Ya te convencí con el estómago y la risa, o te recito poesía mala?",
+            "🎲 ¡Jugando al 'tal vez' con tu risa! Me gusta tu espíritu de riesgo. Te desafío a una competencia de quién puede comer más helado sin que le dé un dolor de cabeza por frío (con un comentario sarcástico, claro). Si ganas, te compro un combo de tu comida favorita. Si pierdo... ¡también te lo compro! Porque el humor es ganar-ganar. ¡Ahora elige sabiamente tu próxima carcajada o serás convertido en un calcetín perdido!"
+        ];
+
+        const envelope = document.getElementById('envelope');
+        const envelopeFlap = document.getElementById('envelopeFlap');
+        const envelopeWrapper = document.getElementById('envelopeWrapper');
+        const invitationCard = document.getElementById('invitationCard');
+        const mainContainer = document.getElementById('mainContainer');
+
+        // Función para abrir el sobre y mostrar la tarjeta
+        envelope.addEventListener('click', () => {
+            envelopeFlap.classList.add('open'); // Abre la solapa
+            envelope.style.cursor = 'default'; // Quita el cursor de click
+
+            // Desactiva los eventos del ratón para el sobre
+            envelope.style.pointerEvents = 'none';
+
+            // Gira el sobre en el aire (da la vuelta)
+            envelopeWrapper.style.transform = 'rotateY(720deg) scale(0.5)'; /* Dos vueltas completas y encoge */
+            envelopeWrapper.style.opacity = '0'; /* Se desvanece */
+
+            // Después de un tiempo, muestra la tarjeta de invitación con una animación
+            setTimeout(() => {
+                invitationCard.classList.add('active', 'slide-in'); // Activa la tarjeta y su animación de entrada
+                mainContainer.style.pointerEvents = 'auto'; // Habilita eventos de ratón para el contenedor principal
+            }, 1000); // Retraso para que la animación del sobre ocurra primero
+        });
+
+        // Función para el botón "No" (se mantiene con su comportamiento especial de humor)
+        function responderNo() {
+            const respuesta = document.getElementById('respuesta');
+            respuesta.textContent = "🚫 ¡ERROR CRÍTICO! Tu botón 'No' no funciona. ¡El humor es imparable! Muahahaha. 😈";
+            respuesta.style.color = "#E74C3C";
+            respuesta.style.display = 'block';
+        }
+
+        // Función principal para las respuestas Sí y Tal Vez
+        function responder(opcion) {
+            const respuesta = document.getElementById('respuesta');
+            let texto = '';
+            let color = '';
+            let respuestasArray;
+
+            if (opcion === 'si') {
+                respuestasArray = respuestasSi;
+                color = "#28a745";
+            } else if (opcion === 'talvez') {
+                respuestasArray = respuestasTalvez;
+                color = "#ffc107";
+            }
+
+            const randomIndex = Math.floor(Math.random() * respuestasArray.length);
+            texto = respuestasArray[randomIndex];
+
+            respuesta.innerHTML = texto;
+            respuesta.style.color = color;
+            respuesta.style.display = 'block';
+        }
+
+        // Asegurarse de que el sobre sea visible y la tarjeta oculta al cargar
+        document.addEventListener('DOMContentLoaded', () => {
+            envelopeWrapper.style.opacity = '1';
+            envelopeWrapper.style.transform = 'none'; // Resetea cualquier posible transformación inicial
+        });
+    </script>
+</body>
+</html>

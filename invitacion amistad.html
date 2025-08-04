@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>¡Acepta esta amistad loca!</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Luckiest+Guy&display=swap'); /* Una fuente más "loca" */
+
+        body {
+            background: linear-gradient(135deg, #1fd1f9, #b621fe);
+            background-size: 400% 400%;
+            animation: moveBg 10s ease infinite;
+            font-family: 'Luckiest Guy', cursive; /* Aplicamos la nueva fuente */
+            text-align: center;
+            padding: 0;
+            margin: 0;
+            overflow: hidden; /* Oculta barras de desplazamiento no deseadas */
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            perspective: 1000px; /* Para efectos 3D */
+        }
+
+        @keyframes moveBg {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .main-container {
+            position: relative;
+            width: 95%;
+            max-width: 700px; /* Ancho máximo para el contenedor de la carta */
+            background: rgba(255, 255, 255, 0.25);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            padding: 35px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            backdrop-filter: blur(5px);
+            transform: scale(0.9);
+            animation: fadeInScale 0.8s ease-out forwards;
+            overflow: visible; /* Permitimos que los elementos hijos con position:absolute se salgan */
+        }
+
+        @keyframes fadeInScale {
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .sobre {
+            width: 250px;
+            height: 170px;
+            background: #fff;
+            margin: 50px auto 40px;
+            position: relative;
+            border-radius: 10px;
+            cursor: pointer;
+            box-shadow: 0 0 25px rgba(0,0,0,0.5);
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+            z-index: 2;
+        }
+
+        .sobre:hover {
+            transform: scale(1.15) rotateY(10deg);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.6);
+        }
+
+        .tapa {
+            width: 0;
+            height: 0;
+            border-left: 125px solid transparent;
+            border-right: 125px solid transparent;
+            border-bottom: 85px solid #ff007f;
+            position: absolute;
+            top: -85px;
+            left: 0;
+            transition: transform 0.7s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            transform-origin: bottom;
+        }
+
+        .contenido {
+            display: none;
+            opacity: 0;
+            transform: translateY(200px) scale(0.7);
+            transition: opacity 1.2s ease-out, transform 1.2s ease-out;
+            width: 100%;
+        }
+
+        .contenido.contenido-abierto {
+            display: block;
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        h1 {
+            font-size: 3em;
+            margin-top: 25px;
+            margin-bottom: 30px;
+            text-shadow: 4px 4px 6px rgba(0,0,0,0.6);
+            color: #ffe600;
+            animation: pulseText 2s infinite alternate;
+        }
+
+        @keyframes pulseText {
+            from { text-shadow: 4px 4px 6px rgba(0,0,0,0.6), 0 0 8px #ffeb3b; }
+            to { text-shadow: 4px 4px 10px rgba(0,0,0,0.9), 0 0 25px #ffeb3b, 0 0 40px #ffc107; }
+        }
+
+        .emoji-principal {
+            font-size: 3.5rem;
+            margin-top: 15px;
+            animation: shake 1.5s infinite ease-in-out;
+            display: block;
+            margin-bottom: 40px;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: rotate(0) scale(1); }
+            25% { transform: rotate(8deg) scale(1.05); }
+            75% { transform: rotate(-8deg) scale(1.05); }
+        }
+
+        .buttons {
+            margin-top: 40px;
+            position: relative; /* CLAVE: Ahora este contenedor es el referente para el botón 'No' */
+            width: fit-content;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-left: auto;
+            margin-right: auto;
+            padding: 20px; /* Un poco de padding para que el botón 'No' tenga espacio para moverse */
+        }
+
+        .buttons button {
+            font-family: 'Luckiest Guy', cursive;
+            font-size: 1.5rem;
+            padding: 18px 35px;
+            margin: 18px;
+            border: none;
+            border-radius: 18px;
+            cursor: pointer;
+            transition: all 0.2s ease-out;
+            font-weight: bold;
+            letter-spacing: 1.5px;
+            box-shadow: 0 8px 12px rgba(0,0,0,0.4);
+            position: relative; /* Aseguramos que los botones normales no se muevan */
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        @keyframes buttonClickPulse {
+            0% { transform: scale(1); box-shadow: 0 8px 12px rgba(0,0,0,0.4); }
+            50% { transform: scale(1.07); box-shadow: 0 10px 18px rgba(0,0,0,0.6); }
+            100% { transform: scale(1); box-shadow: 0 8px 12px rgba(0,0,0,0.4); }
+        }
+
+        .buttons button.clicked {
+            animation: buttonClickPulse 0.3s forwards;
+        }
+
+        .yes { background-color: #00db7f; color: white; }
+        .yes:hover { transform: translateY(-7px) scale(1.03); box-shadow: 0 12px 25px rgba(0,219,127,0.7); }
+
+        .maybe { background-color: #ffe600; color: #444; }
+        .maybe:hover { transform: translateY(-7px) scale(1.03); box-shadow: 0 12px 25px rgba(255,230,0,0.7); }
+
+        .no {
+            background-color: #fc4a1a; color: white;
+            position: absolute; /* CLAVE: Ahora se posiciona ABSOLUTAMENTE con respecto a .buttons */
+            box-shadow: 0 8px 12px rgba(0,0,0,0.4);
+            transition: transform 0.08s linear; /* Más rápido para parecer escurridizo */
+            animation: pulseNoButton 1.5s infinite alternate;
+            z-index: 99;
+            /* Posición inicial para que se vea junto a las otras opciones */
+            /* Ajustamos el 'left' y 'top' para que quede a la derecha de 'Tal vez...' */
+            right: 0px; /* Pegado a la derecha del contenedor .buttons */
+            top: 50%;
+            transform: translateY(-50%); /* Centrar verticalmente */
+            white-space: nowrap; /* Evitar salto de línea en el texto del botón */
+        }
+
+        @keyframes pulseNoButton {
+            /* Al tener right:0px, solo necesitamos controlar la traslación vertical y la escala */
+            from { transform: translateY(-50%) scale(1); }
+            to { transform: translateY(-50%) scale(1.05); }
+        }
+
+
+        .reaction {
+            font-size: 2rem;
+            margin-top: 45px;
+            display: none;
+            font-weight: bold;
+            color: #ffed4a;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.8);
+            animation: fadeInReaction 0.7s ease-out forwards;
+            min-height: 3em;
+            line-height: 1.4;
+        }
+
+        @keyframes fadeInReaction {
+            from { opacity: 0; transform: translateY(40px) scale(0.7); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .decoraciones {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 40px;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+
+        .decoraciones img {
+            width: 100px;
+            height: 100px;
+            animation: flotar 3s ease-in-out infinite, rotateAndPulse 4s infinite alternate;
+        }
+
+        @keyframes rotateAndPulse {
+            0% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(15deg) scale(1.1); }
+            100% { transform: rotate(0deg) scale(1); }
+        }
+
+        @keyframes flotar {
+            0%, 100% { transform: translateY(0) rotate(0deg) scale(1); }
+            50% { transform: translateY(-20px) rotate(5deg) scale(1.08); }
+        }
+
+        @media (max-width: 768px) {
+            .main-container {
+                max-width: 90%;
+                padding: 25px;
+            }
+            h1 {
+                font-size: 2.5em;
+            }
+            .emoji-principal {
+                font-size: 3rem;
+            }
+            .buttons {
+                flex-direction: column; /* Apilar botones en pantallas pequeñas */
+                width: auto;
+            }
+            .buttons button {
+                font-size: 1.2rem;
+                padding: 15px 30px;
+                margin: 12px auto; /* Centrar verticalmente */
+            }
+            .no {
+                position: static; /* Vuelve a ser estático para el flujo normal */
+                margin: 12px auto; /* Centrar también en el flujo normal */
+                transform: none; /* Sin transformaciones al ser estático */
+            }
+            .decoraciones img {
+                width: 80px;
+                height: 80px;
+            }
+            .reaction {
+                font-size: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 2em;
+            }
+            .emoji-principal {
+                font-size: 2.5rem;
+            }
+            .buttons button {
+                font-size: 1rem;
+                padding: 12px 25px;
+                margin: 10px auto;
+            }
+            .decoraciones img {
+                width: 70px;
+                height: 70px;
+            }
+            .reaction {
+                font-size: 1.3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <div class="sobre" onclick="abrirSobre()">
+            <div class="tapa" id="tapa"></div>
+        </div>
+
+        <div class="contenido" id="contenido">
+            <h1>💥 ¡Acepta esta amistad loca, pero con estilo! 💥</h1>
+            <div class="emoji-principal">😎🔥🧠💣</div>
+
+            <div class="decoraciones">
+                <img src="https://em-content.zobj.net/thumbs/120/apple/354/star-struck_1f929.png" alt="emoji estrella">
+                <img src="https://em-content.zobj.net/thumbs/120/apple/354/exploding-head_1f92f.png" alt="emoji boom">
+                <img src="https://em-content.zobj.net/thumbs/120/apple/354/zany-face_1f92a.png" alt="emoji loco">
+            </div>
+
+            <div class="buttons">
+                <button class="yes" onclick="handleClick('yes', this)" title="¡Prepárate para risas sin fin, aventuras épicas y mi increíble colección de memes!">¡Sí, de una! 🎉</button>
+                <button class="maybe" onclick="handleClick('maybe', this)" title="¡Considera acceso exclusivo a mis chistes malos, apoyo incondicional y ser mi cómplice en travesuras!">Tal vez... 🤔</button>
+                <button class="no" id="botonNo" onclick="mostrarReaccion('no')">Ni en broma 🚫</button>
+            </div>
+            <div class="reaction" id="reaccion"></div>
+        </div>
+    </div>
+
+    <script>
+        // Reacciones para cada botón (más frases y emojis)
+        const reaccionesYes = [
+            '¡Lo sabía! ¡Eres la pieza que faltaba en mi rompecabezas de la locura! 🧩🥳',
+            '¡Síííí! ¡Prepara tu cerebro para una explosión de amistad y memes! 🚀🤯',
+            '¡Excelente elección, campeón/a! ¡Comienza la fiesta de la amistad épica! ✨🎉',
+            '¡Directo al corazón! ¡Nuestra amistad será legendaria, garantizado! 💪❤️‍🔥',
+            '¡Unidos seremos invencibles en el arte del buen rollo! ¡Prepárate para reír sin parar! 😂👑',
+            '¡Activando modo amistad máxima! ¡Bienvenido/a al club del caos organizado! 🤩💥',
+            '¡Bingo! ¡Tu sentido de la aventura es impecable! ¡Vamos a crear historias increíbles! 🗺️✍️'
+        ];
+
+        const reaccionesMaybe = [
+            'Hmm... ¿"Tal vez"? ¡Te prometo risas, caos y cero arrepentimientos! 😏😈',
+            '¡No te lo pienses tanto! ¡Mis amistades vienen con garantía de diversión ilimitada! 🎢😜',
+            '¡La vida es un juego, y un "tal vez" es solo el inicio de la mejor partida! ¿Te apuntas? 🎮😉',
+            '¿Dudas? ¡Mi amistad es como un buen meme: una vez que la ves, no puedes vivir sin ella! 😂💖',
+            '¡Dale una oportunidad a la espontaneidad! ¡Podría ser el "tal vez" que cambie tu universo! 🌌✨',
+            '¡Escucha a tu corazón! Él te está gritando "¡DI QUE SÍ!" (o al menos "tal vez") 📢🤔',
+            '¡Estoy seguro/a de que después de conocerme, ese "tal vez" se convertirá en un rotundo "¡SIEMPRE!" 🚀🤝'
+        ];
+
+        const reaccionesNo = [
+            '¡ERROR 404: Amistad no encontrada... en tu corazón! ¡Mi alma de amigo llora! 💔😭',
+            '¡Imposible! ¡Mi sistema detecta un error en tu decisión! ¡Por favor, reconsidera! 🚨🚫',
+            '¡Ay no! ¡Mi universo de diversión acaba de colapsar! ¡Intenta de nuevo, por favor! 💥😩',
+            '¡Esto es un intento de sabotaje a la amistad! ¡No te saldrás con la tuya! 😈🔄',
+            '¡Rechazo esta respuesta! ¡La amistad es inevitable, tarde o temprano caerás! 😂💖',
+            '¡Mi procesador de emociones está en shock! ¡Quizás necesitas más memes para convencerte! 🤯🤷‍♀️',
+            '¡La puerta de la amistad nunca se cierra del todo! ¡Te esperaré con paciencia... y más locuras! 🚪😜'
+        ];
+
+        function abrirSobre() {
+            document.getElementById("tapa").style.transform = "rotateX(180deg)";
+            setTimeout(() => {
+                const contenido = document.getElementById("contenido");
+                contenido.style.display = "block";
+                setTimeout(() => {
+                    contenido.classList.add('contenido-abierto');
+                    document.addEventListener("mousemove", moverBotonNo);
+                }, 50);
+            }, 700);
+        }
+
+        function handleClick(tipoBoton, buttonElement) {
+            buttonElement.classList.add('clicked');
+            buttonElement.addEventListener('animationend', () => {
+                buttonElement.classList.remove('clicked');
+            }, { once: true });
+
+            mostrarReaccion(tipoBoton);
+            /*
+            if (tipoBoton === 'yes') {
+                document.getElementById('soundYes').play();
+            } else if (tipoBoton === 'maybe') {
+                document.getElementById('soundMaybe').play();
+            }
+            */
+        }
+
+        function mostrarReaccion(tipoBoton) {
+            const reaccionElement = document.getElementById("reaccion");
+            let textoReaccion;
+
+            if (tipoBoton === 'yes') {
+                const randomIndex = Math.floor(Math.random() * reaccionesYes.length);
+                textoReaccion = reaccionesYes [randomIndex];
+            } else if (tipoBoton === 'maybe') {
+                const randomIndex = Math.floor(Math.random() * reaccionesMaybe.length);
+                textoReaccion = reaccionesMaybe [randomIndex];
+            } else if (tipoBoton === 'no') {
+                const randomIndex = Math.floor(Math.random() * reaccionesNo.length);
+                textoReaccion = reaccionesNo [randomIndex];
+                // document.getElementById('soundNo').play();
+            }
+
+            reaccionElement.textContent = textoReaccion;
+            reaccionElement.style.display = "block";
+        }
+
+        const botonNo = document.getElementById("botonNo");
+
+        function moverBotonNo(e) {
+            if (!document.getElementById("contenido").classList.contains('contenido-abierto')) {
+                return;
+            }
+
+            const mouseX = e.clientX;
+            const mouseY = e.clientY;
+
+            const buttonRect = botonNo.getBoundingClientRect();
+            const buttonWidth = buttonRect.width;
+            const buttonHeight = buttonRect.height;
+
+            // Obtener la posición del contenedor padre (.buttons)
+            const buttonsContainer = botonNo.parentElement;
+            const buttonsRect = buttonsContainer.getBoundingClientRect();
+
+            // Coordenadas del ratón relativas al contenedor .buttons
+            const mouseXRelative = mouseX - buttonsRect.left;
+            const mouseYRelative = mouseY - buttonsRect.top;
+
+            // Coordenadas del centro del botón relativas al contenedor .buttons
+            const buttonXRelative = (buttonRect.left - buttonsRect.left) + (buttonWidth / 2);
+            const buttonYRelative = (buttonRect.top - buttonsRect.top) + (buttonHeight / 2);
+
+            const deltaX = mouseXRelative - buttonXRelative;
+            const deltaY = mouseYRelative - buttonYRelative;
+            const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+
+            const escapeDistance = 60; // Hice que reaccione a una distancia aún más corta
+            const moveStrength = 0.4; // Reduje aún más la fuerza del empuje
+
+            if (distance < escapeDistance) {
+                const angle = Math.atan2(deltaY, deltaX);
+                const moveAmount = (escapeDistance - distance) * moveStrength;
+                
+                let newXRelative = buttonXRelative - Math.cos(angle) * moveAmount;
+                let newYRelative = buttonYRelative - Math.sin(angle) * moveAmount;
+
+                // Definir límites de movimiento DENTRO del contenedor .buttons con un pequeño margen
+                // Este margen asegura que el botón no se salga completamente del área de botones visibles
+                const paddingLimit = 10; 
+                
+                const minXLimit = paddingLimit;
+                const maxXLimit = buttonsRect.width - buttonWidth - paddingLimit;
+                const minYLimit = paddingLimit;
+                const maxYLimit = buttonsRect.height - buttonHeight - paddingLimit;
+
+                // Ajustar la nueva posición para que no exceda estos límites relativos
+                newXRelative = Math.max(minXLimit, Math.min(newXRelative, maxXLimit));
+                newYRelative = Math.max(minYLimit, Math.min(newYRelative, maxYLimit));
+
+                // Aplicar la nueva posición al botón
+                botonNo.style.left = `${newXRelative}px`;
+                botonNo.style.top = `${newYRelative}px`;
+                
+                // Remover el transform de centrado cuando se está moviendo
+                botonNo.style.transform = `none`; 
+
+            } else {
+                // Cuando el ratón está lejos, el botón regresa a su posición original (derecha del div.buttons)
+                // Usamos `right` y `top` para mantenerlo en su lugar inicial
+                botonNo.style.left = `auto`; /* Restablecer left */
+                botonNo.style.right = `0px`; /* Pegarlo a la derecha del contenedor buttons */
+                botonNo.style.top = `50%`; /* Centrar verticalmente */
+                botonNo.style.transform = `translateY(-50%)`; /* Mantener centrado verticalmente */
+            }
+        }
+    </script>
+</body>
+</html>
